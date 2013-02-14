@@ -1,0 +1,6 @@
+.row
+  .span4
+    Add URL:
+    %form{ :name => 'url_query', :action => 'new_job', :method => 'post' }
+      %input{ :name=>'url', :id=>'url', :value=>'', :type=>'text' }
+      %input{ :type=>'submit', :value=>'Submit' }

@@ -1,0 +1,16 @@
+{
+  "name": "Backbone Boilerplate",
+  "version": "0.1.0",
+
+  "jam": {
+    "packageDir": "./vendor/jam",
+    "baseUrl": "./app",
+
+    "dependencies": {
+      "backbone": "0.9.10",
+      "jquery": "1.9.1",
+      "underscore": "1.4.3",
+      "backbone.layoutmanager": "0.8.4"
+    }
+  }
+}

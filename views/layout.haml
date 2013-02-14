@@ -1,0 +1,44 @@
+!!!
+%html{:lang => "en"}
+  %head
+    %meta{:charset => "utf-8"}/
+    %title Bootstrap, from Twitter
+    %meta{:content => "", :name => "description"}/
+    %meta{:content => "", :name => "author"}/
+    / Le HTML5 shim, for IE6-8 support of HTML elements
+    /[if lt IE 9]
+      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    / Le styles
+    
+    :plain
+      <!-- Application styles. -->
+
+      <!--(if target dummy)><!-->
+      <link rel="stylesheet" href="/app/styles/index.css">
+      <!--<!(endif)-->
+
+      <!--(if target release)>
+      <link rel="stylesheet" href="index.css">
+      <!(endif)-->
+
+      <!--(if target debug)>
+      <link rel="stylesheet" href="index.css">
+      <!(endif)-->
+
+
+  %body
+    %main{ :role=>"main", :id=>"main" }
+      = yield
+
+    :plain
+      <!--(if target dummy)><!-->
+        <script data-main="/app/config" src="/vendor/js/libs/require.js"></script>
+      <!--<!(endif)-->
+
+      <!--(if target release)>
+        <script src="require.js"></script>
+      <!(endif)-->
+
+      <!--(if target debug)>
+        <script src="require.js"></script>
+      <!(endif)-->

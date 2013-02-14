@@ -1,0 +1,9 @@
+redis:
+  host: localhost
+  port: 6379
+
+  namespace: bg_
+  key_names:
+    jobs: 'jobs'
+
+
