@@ -14,7 +14,7 @@ gem 'confstruct'
 gem 'eventmachine'
 gem 'em-hiredis'
 gem 'async_sinatra'
-gem "thin"
+gem 'thin'
 
 group :test do
   gem 'rake', '0.9.2.2'
