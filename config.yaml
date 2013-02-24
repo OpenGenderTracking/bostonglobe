@@ -7,3 +7,5 @@ redis:
     jobs: 'jobs'
 
 
+jobs:
+  path: jobs

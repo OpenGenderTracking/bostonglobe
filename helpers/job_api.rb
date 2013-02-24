@@ -5,6 +5,7 @@ require 'eventmachine'
 require 'em-hiredis'
 require 'uuid'
 require 'yaml'
+require 'src/api_parser'
 
 class JobAPI < Sinatra::Base
   register Sinatra::Async
@@ -54,6 +55,11 @@ class JobAPI < Sinatra::Base
           :url => request_body["url"],
           :status => 'started'
         }.to_json
+
+        # TODO: start processing job here!
+        parser = Parsers::APIParser.new(request_body["url"], request_body["name"], @config)
+
+        parser.fetch()
 
         # save this job in our jobs list.
         @read.hset key_for('jobs'), message, response
