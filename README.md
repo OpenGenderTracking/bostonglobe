@@ -25,10 +25,9 @@ Once all requirements are in place, you may need to update the following files:
 2. `config.yaml` 
 
 * `redis`
-
-** `host` - the host name of your redis queue server
-** `port` - the port of the redis server
-** `namespace` - the prefix for redis keys
+ * `host` - the host name of your redis queue server
+ * `port` - the port of the redis server
+ * `namespace` - the prefix for redis keys
 
 * `storeType` - The type of backend data store to use: `MongoStore` or `FileSystemStore`. Be sure to change the appropriate connectivity/path information in the section corresponding to the store type you picked.
 
