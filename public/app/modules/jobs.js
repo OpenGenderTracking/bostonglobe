@@ -7,7 +7,7 @@ define([
   // a single job model
   Job.Model = Backbone.Model.extend({
     url : 'job',
-    idAttribute : 'job_id',
+    idAttribute : '_id',
     parse : function(data) {
       if (typeof data === "string") {
         return JSON.parse(data);  

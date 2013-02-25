@@ -1,11 +1,17 @@
 redis:
   host: localhost
   port: 6379
-
   namespace: bg_
-  key_names:
-    jobs: 'jobs'
 
+storeType: MongoStore
 
-jobs:
-  path: jobs
+FileSystemStore:
+  articles:
+    path: data/articles
+  jobs:
+    path: data/jobs
+
+MongoStore:
+  mongo:
+    host: localhost
+    port: 27000

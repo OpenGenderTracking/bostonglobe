@@ -5,35 +5,27 @@ require 'cgi'
 module Parsers
   class APIParser < Parsers::Default
 
-    def initialize(url, job_name, config)
-      super(check_url(url), job_name, config)
+    def initialize(job, config, store)
 
-      # make job folder
-      job_folder = File.expand_path(
-        File.join(
-          File.dirname(__FILE__), 
-          "../", 
-          @config.jobs.path,
-          @job_name
-        ) 
-      )
+      super(job, config, store)
 
-      if (Dir.exists? (job_folder))
-        Dir.rmdir(job_folder)
-      end
-      
-      Dir.mkdir(job_folder)
+      # fix url
+      @job[:url] = check_url(@job[:url])
+
+      # store the job to start. we will save it
+      # again when we are done adding items to it.
+      @job[:status] = 'getting articles'
+      @store.save_job(@job)
     end
 
     # we have:
-    # @job_id
-    # @url
+    # @job with a job_id and url
     def fetch
-      
-      # TODO: get url here, pass each entry into parse
-      # make sure you page when you need to.
 
-      fetch_all_articles(@url)
+      fetch_all_articles(@job[:url])
+
+      # when done fetching save the job
+      @store.update_job(@job)
 
     end
 
@@ -49,14 +41,24 @@ module Parsers
       article = {}
 
       article["id"] = self.generate_id(entry)
-      article["url"] = entry["data"]["canonicalurl"][0]
-      article["title"] = entry["data"]["headline"][0]
-      article["body"] = entry["data"]["summary"][0]
-      article["original_body"] = entry["data"]["summary"][0]
-      article["pub_date"] = entry["data"]["printpublicationdate"][0]
-      article["byline"] = entry["data"]["byname"][0]
 
-      self.save(article)
+      # only save articles that don't already exist.
+      if (!@store.has_article?(article))
+        article["url"] = entry["data"]["canonicalurl"][0]
+        article["title"] = entry["data"]["headline"][0]
+        article["body"] = entry["data"]["summary"][0]
+        article["original_body"] = entry["data"]["summary"][0]
+        article["pub_date"] = entry["data"]["printpublicationdate"][0]
+        article["byline"] = entry["data"]["byname"][0]
+
+        # save the article with whatever store we're using.
+        @store.save_article(article)
+      end
+
+      # save this article as being a part of the job.
+      @job[:article_ids] << article["id"]
+
+      article
     end
 
     private

@@ -5,7 +5,11 @@ require 'eventmachine'
 require 'em-hiredis'
 require 'uuid'
 require 'yaml'
+require 'mongo'
 require 'src/api_parser'
+require 'src/mongo_store'
+require 'src/file_system_store'
+require 'active_support/inflector'
 
 class JobAPI < Sinatra::Base
   register Sinatra::Async
@@ -23,10 +27,14 @@ class JobAPI < Sinatra::Base
       # publishing service
       @sub = EM::Hiredis.connect("redis://#{@config.redis.host}:#{@config.redis.port}/4")
     end
-
     if (!@read)
       # reading (non evented)
       @read = Redis.new(:host => @config.redis.host, :port => @config.redis.port)
+    end
+    if (!@store)
+      # start a store based on configuration details
+      # available stores are MongoStore and FileSystemStore.
+      @store = "Store::#{@config.storeType}".constantize.new(@config)
     end
   end
 
@@ -47,37 +55,39 @@ class JobAPI < Sinatra::Base
       if (channel == job_request_id)
 
         # we've recieved a new job id. Awesome!
-        # save this job in our jobs list (in redis.)
-        response = { 
-          :job_request_id => job_request_id,
-          :job_id => message, 
-          :name => request_body["name"], 
+        # save this job to mongo
+        job_document = {
+          :_id => message,
+          :name => request_body["name"],
           :url => request_body["url"],
-          :status => 'started'
-        }.to_json
+          :status => 'started',
+          :article_ids => [],
+          :date => Time.now()
+        }
+
+        # for not use a file system store.
+        parser = Parsers::APIParser.new(
+          job_document,
+          @config,
+          @store
+        )
+
+        # will get articles
+        # will store them in the store
+        # will store the job when its done with it
+        parser.fetch
 
         # TODO: start processing job here!
-        parser = Parsers::APIParser.new(request_body["url"], request_body["name"], @config)
 
-        parser.fetch()
-
-        # save this job in our jobs list.
-        @read.hset key_for('jobs'), message, response
-
-        # return the response
-        body response
+        # return the job
+        body job_document.to_json
       end
     end
   end
 
   # return all availabe jobs in the system
   get '/list' do
-    jobs = []
-    jobs_raw = @read.hvals(key_for('jobs'))
-
-    jobs_raw.each do |job|
-      jobs << JSON.parse(job)
-    end
+    jobs = @store.list_jobs
     body jobs.to_json
   end
 
@@ -91,9 +101,5 @@ class JobAPI < Sinatra::Base
     response = { :job_id => job_id }.to_json
     body response
   end
-
-  def key_for(q)
-    return @config.redis.namespace + @config.redis.key_names[q]
-  end 
 
 end

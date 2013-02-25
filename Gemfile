@@ -15,6 +15,9 @@ gem 'eventmachine'
 gem 'em-hiredis'
 gem 'async_sinatra'
 gem 'thin'
+gem 'bson_ext'
+gem 'mongo'
+gem 'activesupport'
 
 group :test do
   gem 'rake', '0.9.2.2'

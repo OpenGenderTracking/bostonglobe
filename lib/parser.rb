@@ -3,10 +3,10 @@ require 'uuid'
 module Parsers
   class Default
 
-    def initialize(url, job_name, config)
-      @job_name = job_name
-      @url = url
+    def initialize(job, config, store)
+      @job = job
       @config = config
+      @store = store
     end
 
     # return the id of your document or a new id.
@@ -29,22 +29,5 @@ module Parsers
       self.fetch
     end
 
-    def save(article)
-      id = self.generate_id(article)
-      full_path = File.expand_path(
-        File.join(
-          File.dirname(__FILE__), 
-          "../", 
-          @config.jobs.path,
-          @job_name,
-          self.generate_id(article) + ".json"
-        ) 
-      )
-
-      new_article = JSON.pretty_generate(article)
-      file = File.open(full_path, 'w')
-      file.write(new_article)
-      file.close
-    end
   end
 end
