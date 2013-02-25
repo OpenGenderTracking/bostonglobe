@@ -25,12 +25,22 @@ Once all requirements are in place, you may need to update the following files:
 2. `config.yaml` 
 
 * `redis`
+
 ** `host` - the host name of your redis queue server
 ** `port` - the port of the redis server
 ** `namespace` - the prefix for redis keys
+
 * `storeType` - The type of backend data store to use: `MongoStore` or `FileSystemStore`. Be sure to change the appropriate connectivity/path information in the section corresponding to the store type you picked.
 
 ## Change log
+
+### 2013/02/25
+
+Added support for using mongo db. Articles now get parsed and stored in either mongo or on the file system. Users can choose based on config file setting.
+
+### 2013/02/24
+
+Added fetching and parsing of boston globe API. This supports pagination of multipage results.
 
 ### 2013/02/14
 
