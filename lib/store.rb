@@ -7,7 +7,7 @@ module Store
       @config = config
     end
 
-    def store_job(job)
+    def save_job(job)
       # overwrite with your own storage mechanism.
     end
 
@@ -15,7 +15,7 @@ module Store
       # overwrite with your own storage mechanism.
     end
 
-    def store_article(article)
+    def save_article(article)
       # overwrite with your own storage mechanism.
     end
 
