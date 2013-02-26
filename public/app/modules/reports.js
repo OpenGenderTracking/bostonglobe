@@ -26,7 +26,7 @@ define([
     },
 
     beforeRender: function() {
-      this.$el.empty();
+      this.$el.find('.article_list_container').empty();
       if (this.model) {
         this.insertView('.article_list_container', new Article.Views.ListView({
           collection : this.model.articles

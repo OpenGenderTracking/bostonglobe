@@ -4,3 +4,55 @@
 @import "../../vendor/h5bp/css/main.css";
 
 /*-- Application stylesheets. -----------------------------------------------*/
+
+ul.articles_list {
+  list-style-type: none;
+}
+li.article {
+  margin-bottom: 3px;
+}
+.title {
+  margin : 0;
+}
+.article_item {
+  padding: 4px;
+}
+.article_item a {
+  text-decoration: none;
+  color: #222;
+}
+.article_item a:hover {
+  color: #555;
+}
+.article_item.female {
+  background-color: #F7D7E4;
+}
+.article_item.male { 
+  background-color: #C2D3F2;
+}
+.article_item.unknown {
+  background-color: #D9D9D9;
+}
+.article_item .byline {
+  font-size: 0.8em;
+}
+.article_item .byline.female {
+  color: #E33BB9;
+}
+.article_item .byline.male { 
+  color: #215DCC;
+}
+.article_item .byline.unknown {
+  color: #808080;
+}
+.article_item .pubdate {
+  font-size: 0.8em;
+}
+.article_item .raw_toggle {
+  cursor: pointer;
+  color: #888;
+}
+.article_item .raw {
+  font-size: 0.7em;
+  font-family: courier;
+}

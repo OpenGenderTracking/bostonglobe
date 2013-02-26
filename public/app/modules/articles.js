@@ -4,10 +4,47 @@ define([
 
   var Article = app.module();
 
-  Article.Model = Backbone.Model.extend({});
+  Article.Model = Backbone.Model.extend({
+
+    initialize : function(attrs, options) {
+      // determine the balance of this article
+      var results = this.get('metrics'),
+          male = 0,
+          female = 0,
+          unknown = 0;
+
+      _.each(results, function(score, metric) {
+        if (score.result === "Female") {
+          female++;
+        } else if (score.result === "Male") {
+          male++;
+        } else {
+          unknown++;
+        }
+      }, this);
+
+      var total = female + male + unknown;
+      var p = {
+        female : female / total,
+        male : male / total,
+        unknown : unknown / total
+      };
+
+      if (p.female > 0.66) {
+        this.classification = "female";
+      } else if (p.female > 0.66) {
+        this.classificaton = "male"; 
+      } else {
+        this.classification = "unknown";
+      }
+    }
+
+  });
 
   Article.Collection = Backbone.Collection.extend({
+    
     model : Article.Model,
+
     initialize : function(models, options) {
       this.job = options.job;
     },
@@ -20,8 +57,22 @@ define([
     template : 'articles/listItem',
     tagName : 'li',
     className : 'article',
+    events : {
+      'click div.raw_toggle' : 'onRawToggle'
+    },
+    onRawToggle : function(event) {
+      var raw = this.$el.find('div.raw');
+      if (raw.is(':visible')) {
+        $(event.target).html('+ raw results');
+      } else {
+        $(event.target).html('&#8211; raw results');
+      }
+      raw.toggle();
+    },
     serialize : function() {
-      return this.model.toJSON();
+      var article = this.model.toJSON();
+      article.classification = this.model.classification;
+      return article;
     }
   });
 
@@ -29,7 +80,6 @@ define([
     template : 'articles/list',
 
     initialize : function() {
-      this.listenTo(app, 'job:select', this.render);
       this.listenTo(this.collection, "reset add", this.render);
     },
 

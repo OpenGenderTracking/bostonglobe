@@ -1,3 +1,18 @@
-<h4 class='title'><%= title %></h4>
-<div class='byline'>By: <%= byline %> </div><br>
-<div class='pubdate'>Published on: <%= pub_date %> </div>
+<div class='article_item <%= classification %>'>
+  <h4 class='title'>
+    <a href="<%= url %>"><%= title %></a>
+  </h4>
+  <div class='byline <%= typeof metrics !== "undefined" ? metrics.byline_gender.result.toLowerCase() : "" %>'>
+    <%= byline %> 
+  </div>
+  <div class='pubdate'>Published on: <%= pub_date %> </div>
+  <% if (typeof metrics !== "undefined") { %>
+    <div class='raw_toggle'>
+      + raw results
+    </div>
+
+    <div class='raw' style='display:none;'>
+      <pre><%= JSON.stringify(metrics, undefined, 2) %></pre>
+    </div>
+  <% } %>
+</div>
