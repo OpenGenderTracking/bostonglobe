@@ -35,6 +35,12 @@ module Store
       @jobs.update({ "_id" => job[:_id] }, job)
     end
 
+    def list_articles(job_id)
+      job = @jobs.find("_id" => job_id).first
+      articles = @articles.find("id" => { "$in" => job["article_ids"] })
+      articles.to_a
+    end
+
     def save_article(article)
       # overwrite with your own storage mechanism.
       @articles.insert(article)

@@ -18,6 +18,7 @@ gem 'thin'
 gem 'bson_ext'
 gem 'mongo'
 gem 'activesupport'
+gem 'sinatra-contrib'
 
 group :test do
   gem 'rake', '0.9.2.2'

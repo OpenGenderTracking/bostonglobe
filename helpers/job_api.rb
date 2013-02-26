@@ -102,4 +102,8 @@ class JobAPI < Sinatra::Base
     body response
   end
 
+  get '/:job_id/articles/list' do
+    job_id = params[:job_id]
+    @store.list_articles(job_id).to_json
+  end
 end

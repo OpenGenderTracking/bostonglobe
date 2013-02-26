@@ -1,6 +1,8 @@
 define([
-  "app"
-], function(app) {
+  "app",
+  "modules/articles"
+
+], function(app, Article) {
 
   var Job = app.module();
 
@@ -26,6 +28,19 @@ define([
   // a single list item for the list of available jobs.
   Job.Views.ListItem = Backbone.View.extend({
     template : 'jobs/listItem',
+    events : {
+      "click li" : "onJobSelection"
+    },
+
+    onJobSelection : function() {
+      var self = this;
+      // fetch the articles for the model
+      this.model.articles = new Article.Collection([], { job : this.model });
+      this.model.articles.fetch().then(function() {
+        app.trigger("job:select", self.model);  
+      });
+    },
+
     serialize: function() {
       return { 'job' : this.model.toJSON() };
     }
