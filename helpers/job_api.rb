@@ -50,6 +50,7 @@ class JobAPI < Sinatra::Base
     # request a new job id.
     @pub.publish 'new_job', job_request_id
     @sub.subscribe job_request_id
+    @sub.subscribe 'process_article_done'
 
     @sub.on(:message) do |channel, message|
       if (channel == job_request_id)
@@ -77,10 +78,28 @@ class JobAPI < Sinatra::Base
         # will store the job when its done with it
         parser.fetch
 
-        # TODO: start processing job here!
-
         # return the job
         body job_document.to_json
+
+        # TODO: start processing job here!
+        job_document[:article_ids].each do |article_id|
+          
+          # get the article
+          article = @store.get_article(article_id)
+          
+          # send it to be processed
+          @pub.publish "process_article", { :article => article, :job_id => job_document["_id"] }.to_json()
+
+        end
+
+      elsif (channel == 'process_article_done')
+        
+        # an article was processed. yey.
+        article = JSON.parse(message)["article"]
+        article.delete("_id")
+
+        # re-save it
+        @store.update_article(article)
       end
     end
   end

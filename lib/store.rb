@@ -7,11 +7,23 @@ module Store
       @config = config
     end
 
+    def get_job(job_id)
+      # overwrite with your own storage mechanism.
+    end
+
     def save_job(job)
       # overwrite with your own storage mechanism.
     end
 
     def update_job(job)
+      # overwrite with your own storage mechanism.
+    end
+
+    def get_article(article_id)
+      # overwrite with your own storage mechanism.
+    end
+
+    def list_articles(job_id)
       # overwrite with your own storage mechanism.
     end
 

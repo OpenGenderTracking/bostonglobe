@@ -17,6 +17,10 @@ module Store
       @articles = @mongo.collection("articles")
     end
 
+    def get_job(job_id)
+      @jobs.find("_id" => job_id).first
+    end
+
     def list_jobs
       jobs = []
       @jobs.find.each { |row| 
@@ -35,10 +39,18 @@ module Store
       @jobs.update({ "_id" => job[:_id] }, job)
     end
 
+    def get_article(article_id)
+      @articles.find("id" => article_id).first
+    end
+
     def list_articles(job_id)
       job = @jobs.find("_id" => job_id).first
       articles = @articles.find("id" => { "$in" => job["article_ids"] })
       articles.to_a
+    end
+
+    def update_article(article)
+      @articles.update({ "id" => article["id"] }, article)
     end
 
     def save_article(article)

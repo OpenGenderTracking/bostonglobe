@@ -7,6 +7,19 @@ module Store
       super(config)
     end
 
+    def get_job(job_id)
+      full_path = File.expand_path(
+        File.join(
+          File.dirname(__FILE__), 
+          "../", 
+          @config.FileSystemStore.jobs.path,
+          job_id + ".json"
+        ) 
+      )
+
+      JSON.parse(File.open(full_path, 'r').read)
+    end
+
     def list_jobs
       job_files = Dir[File.expand_path(
             File.join(
@@ -46,6 +59,26 @@ module Store
       save_job(job)
     end
     
+    def get_article(article_id)
+      article = { "id" => article_id }
+      JSON.parse(
+        File.open(article_path(article), 'r').read
+      )
+    end
+
+    def list_articles(job_id)
+      job = get_job(job_id)
+      articles = []
+      job["article_ids"].each do |article_id|
+        articles << get_article(article_id)
+      end
+      articles
+    end
+
+    def update_article(article)
+      save_article(article)
+    end
+
     def save_article(article)
       new_article = JSON.pretty_generate(article)
       file = File.open(article_path(article), 'w')
