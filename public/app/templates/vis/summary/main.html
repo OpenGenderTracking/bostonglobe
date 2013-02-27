@@ -1,0 +1,13 @@
+<h4>Query Summary: </h4>
+<div class="summary_squares"></div>
+<div class="summary_text">
+  <div>There is a total of <b><%= total %></b> articles.</div>
+  <div>
+    Out of which: <br>
+      <span class="female"><%= (breakdown.female * 100 / total).toFixed(1) %>% (<%= breakdown.female %>)</span> 
+      were classified as female  <br>
+      <span class="male"><%= (breakdown.male * 100 / total).toFixed(1) %>% (<%= breakdown.male %>)</span> 
+      were classified as male  <br>
+      <span class="unknown"><%= (breakdown.unknown * 100 / total ).toFixed(1) %>% (<%= breakdown.unknown %>)</span> were unclassified.
+  </div>
+</div>

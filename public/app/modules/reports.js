@@ -1,9 +1,11 @@
 define([
   "app",
   "modules/jobs",
-  "modules/articles"
+  "modules/articles",
+  "modules/vis/timeline",
+   "modules/vis/summary"
 
-], function(app, Job, Article) {
+], function(app, Job, Article, Timeline, Summary) {
   
   var Report = app.module();
 
@@ -26,6 +28,22 @@ define([
     },
 
     beforeRender: function() {
+      this.$el.find('.article_summary').empty();
+      if (this.model) {
+        this.insertView('.article_summary', new Summary.Views.Main({
+          collection : this.model.articles
+        }));
+      }
+
+      // render timeline
+      this.$el.find('.article_timeline').empty();
+      if (this.model) {
+        this.insertView('.article_timeline', new Timeline.Views.Linechart({
+          collection : this.model.articles
+        }));
+      }
+
+      // render article list
       this.$el.find('.article_list_container').empty();
       if (this.model) {
         this.insertView('.article_list_container', new Article.Views.ListView({

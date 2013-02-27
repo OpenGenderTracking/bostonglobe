@@ -10,7 +10,9 @@
       "backbone": "0.9.10",
       "jquery": "1.9.1",
       "underscore": "1.4.3",
-      "backbone.layoutmanager": "0.8.4"
+      "backbone.layoutmanager": "0.8.4",
+      "d3" : "3.0.6",
+      "moment": "*"
     }
   }
 }
