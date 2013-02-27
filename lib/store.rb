@@ -19,11 +19,18 @@ module Store
       # overwrite with your own storage mechanism.
     end
 
-    def get_article(article_id)
+    # return the contents of an article. Props allow
+    # specifying what properties should be returned.
+    # The props argument is optional. Without
+    # it, all content will be returned. 
+    def get_article(article_id, props=nil)
       # overwrite with your own storage mechanism.
     end
 
-    def list_articles(job_id)
+    # which job to list articles for and what properties
+    # should be returned. The props argument is optional. 
+    # Without it, all content will be returned.
+    def list_articles(job_id, props=nil)
       # overwrite with your own storage mechanism.
     end
 

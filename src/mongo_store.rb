@@ -39,14 +39,42 @@ module Store
       @jobs.update({ "_id" => job[:_id] }, job)
     end
 
-    def get_article(article_id)
-      @articles.find("id" => article_id).first
+    def get_article(article_id, props=nil)
+      article = @articles.find("id" => article_id).first
+      if (props)
+        temp = {
+          "metrics" => article["metrics"]
+        }
+        props.each do |p|
+          temp[p] = article[p]
+        end
+        temp
+      else
+        article
+      end
     end
 
-    def list_articles(job_id)
+    def list_articles(job_id, props=nil)
       job = @jobs.find("_id" => job_id).first
       articles = @articles.find("id" => { "$in" => job["article_ids"] })
-      articles.to_a
+
+      a = articles.to_a
+
+      if (props)
+        articles_subset = []
+        a.each do |article|
+          temp = {
+            "metrics" => article["metrics"]
+          }
+          props.each do |p|
+            temp[p] = article[p]
+          end
+          articles_subset << temp
+        end
+        return articles_subset
+      else
+        a
+      end
     end
 
     def update_article(article)

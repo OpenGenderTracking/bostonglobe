@@ -59,18 +59,34 @@ module Store
       save_job(job)
     end
     
-    def get_article(article_id)
+    def get_article(article_id, props=nil)
       article = { "id" => article_id }
-      JSON.parse(
+      body = JSON.parse(
         File.open(article_path(article), 'r').read
       )
+
+      if (props)
+
+        # always return the metrics for an article.
+        article = {
+          "metrics" => body["metrics"] 
+        }
+        # only return the requested selection
+        props.each do |prop|
+          article[prop] = body[prop]
+        end
+
+        article
+      else
+        body
+      end
     end
 
-    def list_articles(job_id)
+    def list_articles(job_id, props=nil)
       job = get_job(job_id)
       articles = []
       job["article_ids"].each do |article_id|
-        articles << get_article(article_id)
+        articles << get_article(article_id, props)
       end
       articles
     end

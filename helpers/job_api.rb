@@ -123,6 +123,6 @@ class JobAPI < Sinatra::Base
 
   get '/:job_id/articles/list' do
     job_id = params[:job_id]
-    @store.list_articles(job_id).to_json
+    @store.list_articles(job_id, ["title", "url", "id", "byline", "pub_date"]).to_json
   end
 end
