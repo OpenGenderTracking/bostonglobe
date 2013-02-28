@@ -118,6 +118,8 @@ define([
         male : {}, female : {}, unknown : {}
       };
 
+      var range = this.timeRange();
+
       this.each(function(article){
         var date   = article.get("pub_date"),
             gender = null;
@@ -136,6 +138,18 @@ define([
 
       }, this);
 
+
+      // pad the data with zeroes for missing values.
+      for(var i = range.min; i < range.max; i = moment(i).add('days', 1)) {
+        var d = i.format('YYYYMMDD');
+
+        _.each(bins, function(dates, gender) {
+          if (typeof dates[d] === "undefined") {
+            dates[d] = 0
+          }
+        });
+      }
+
       var data = [];
 
       // go over male, female, unknown
@@ -150,9 +164,12 @@ define([
           });
         });  
 
-        data[gender] = genderData;
+        data.push({ 
+          classification : gender, 
+          values : genderData 
+        }); 
       });
-      
+
       return data;
     }
   });

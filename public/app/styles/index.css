@@ -5,6 +5,18 @@
 
 /*-- Application stylesheets. -----------------------------------------------*/
 
+/* --- general colors ---- */
+
+.female {
+  background-color: #F7D7E4;
+}
+.male { 
+  background-color: #C2D3F2;
+}
+.unknown {
+  background-color: #D9D9D9;
+}
+
 /* --- article lists ---- */
 ul.articles_list {
   list-style-type: none;
@@ -25,17 +37,6 @@ li.article {
 .article_item a:hover {
   color: #555;
 }
-
-.female {
-  background-color: #F7D7E4;
-}
-.male { 
-  background-color: #C2D3F2;
-}
-.unknown {
-  background-color: #D9D9D9;
-}
-
 .article_item.female {
   background-color: #F7D7E4;
 }
@@ -70,6 +71,10 @@ li.article {
 }
 
 /* --- summary ---- */
+.article_summary {
+  display: inline-block;
+  width: 400px;
+}
 .summary_squares {
   display: inline-block;
   border: 1px solid black;
@@ -80,4 +85,40 @@ li.article {
 }
 .summary_squares .treemap_cell {
   position: absolute;
+}
+
+/* ------ timeline -------- */
+.line {
+  fill: none;
+  stroke-width: 2px;
+}
+.line.female {
+  stroke: #E33BB9;
+}
+.line.male { 
+  stroke: #215DCC;
+}
+.line.unknown {
+  stroke: #808080;
+}
+.domain {
+  fill: none;
+  stroke:#555;
+  stroke-width: 1.5px;
+}
+.tick {
+  shape-rendering: crispEdges;
+}
+.x.axis path, .y.axis path,.x.axis line, .y.axis line {
+  fill:none;
+  stroke:#000;
+}
+.mouseregion {
+  fill: none;
+  stroke : #fff;
+  opacity: 0;
+  stroke-width: 20;
+}
+.y.axis .tick text,.x.axis .tick text {
+  font-size : 0.8em;
 }

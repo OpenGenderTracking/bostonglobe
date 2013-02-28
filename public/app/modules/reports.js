@@ -38,9 +38,15 @@ define([
       // render timeline
       this.$el.find('.article_timeline').empty();
       if (this.model) {
-        this.insertView('.article_timeline', new Timeline.Views.Linechart({
-          collection : this.model.articles
-        }));
+        var range = this.model.articles.timeRange();
+        if (range.isRange) {
+          this.insertView('.article_timeline', new Timeline.Views.Linechart({
+            collection : this.model.articles,
+            range : range,
+            width: 600,
+            height: 150
+          }));
+        }
       }
 
       // render article list
