@@ -70,6 +70,20 @@ li.article {
   font-family: courier;
 }
 
+/* -- author lists --- */
+.name.female {
+  color: #E33BB9;
+  background-color: #fff;
+}
+.name.male { 
+  color: #215DCC;
+  background-color: #fff;
+}
+.name.unknown {
+  color: #808080;
+  background-color: #fff;
+}
+
 /* --- summary ---- */
 .article_summary {
   display: inline-block;
