@@ -3,9 +3,10 @@ define([
   "modules/jobs",
   "modules/articles",
   "modules/vis/timeline",
-   "modules/vis/summary"
+  "modules/vis/summary",
+  "modules/vis/stack",
 
-], function(app, Job, Article, Timeline, Summary) {
+], function(app, Job, Article, Timeline, Summary, Stack) {
   
   var Report = app.module();
 
@@ -35,16 +36,24 @@ define([
         }));
       }
 
+      this.$el.find('.article_authors').empty();
+      if (this.model) {
+        var authors = new Article.Authors(this.model.articles.authors());
+        this.insertView('.article_authors', new Article.Views.AuthorsList({
+          collection : authors
+        }));
+      }
+
       // render timeline
       this.$el.find('.article_timeline').empty();
       if (this.model) {
         var range = this.model.articles.timeRange();
         if (range.isRange) {
-          this.insertView('.article_timeline', new Timeline.Views.Linechart({
+          this.insertView('.article_timeline', new Stack.Views.Bars({
             collection : this.model.articles,
             range : range,
             width: 600,
-            height: 150
+            height: 300
           }));
         }
       }

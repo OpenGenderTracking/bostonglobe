@@ -122,3 +122,18 @@ li.article {
 .y.axis .tick text,.x.axis .tick text {
   font-size : 0.8em;
 }
+
+/*---- stack ----- */
+.gender rect {
+  stroke : #222;
+  stroke-width: 1px;
+}
+.gender.female {
+  fill: #F7D7E4;
+}
+.gender.male { 
+  fill: #C2D3F2;
+}
+.gender.unknown {
+  fill: #D9D9D9;
+}

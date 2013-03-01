@@ -81,7 +81,7 @@ define([
         .call(yAxis);
 
       var classifications = this.chart.selectAll(".classification")
-        .data(this.data, function(d) { return d.classification; })
+        .data(this.data, function(d) { return d.name; })
           .enter().append("g")
           .attr("class", "classification");
 
@@ -111,7 +111,7 @@ define([
 
       classifications.append("path")
         .attr("class", function(d) { 
-          return "line " + d.classification; 
+          return "line " + d.name; 
         })
         .attr("d", function(d) { return line(d.values); })
         .style("opacity", "0.5");

@@ -1,9 +1,9 @@
 <div class='article_item <%= classification %>'>
   <h4 class='title'>
-    <a href="<%= url %>"><%= title %></a>
+    <a href="<%= url %>"><%= typeof title !== "undefined" ? title : '' %></a>
   </h4>
   <div class='byline <%= typeof metrics !== "undefined" ? metrics.byline_gender.result.toLowerCase() : "" %>'>
-    <%= byline %> 
+    <%= typeof byline !== "undefined" ? byline : '' %> 
   </div>
   <div class='pubdate'>Published on: <%= pub_date %> </div>
   <% if (typeof metrics !== "undefined") { %>

@@ -6,6 +6,9 @@ define([
   var Article = app.module();
 
   Article.Model = Backbone.Model.extend({
+    defaults : {
+      "title" : ""
+    },
 
     initialize : function(attrs, options) {
 
@@ -19,6 +22,10 @@ define([
     // count because we don't have full text.
     balanceByBylineOnly : function() {
       this.classification = this.get("metrics").byline_gender.result.toLowerCase();
+    },
+
+    balanceByPronounOnly : function() {
+      this.classification = this.get("metrics").pronouns.result.toLowerCase();
     },
 
     // determine the classification of an article
@@ -47,9 +54,9 @@ define([
         unknown : unknown / total
       };
 
-      if (p.female > 0.66) {
+      if (p.female > 0.5) {
         this.classification = "female";
-      } else if (p.female > 0.66) {
+      } else if (p.male > 0.5) {
         this.classification = "male"; 
       } else {
         this.classification = "unknown";
@@ -111,6 +118,28 @@ define([
       }
     },
 
+    authors : function() {
+      var authors = {};
+      this.each(function(article) {
+        var author = article.get("byline");
+        authors[author] = authors[author] || { 
+          count : 0, 
+          gender : article.get("metrics").byline_gender.result 
+        };
+        authors[author].count++;
+      });
+
+      var author_list = [];
+      _.each(authors, function(author, name) {
+        author_list.push({
+          name : name,
+          count : author.count,
+          gender : author.gender
+        });
+      });
+      return author_list;
+    },
+
     // bins data by gender -> date -> count.
     binData : function(byMetric) {
 
@@ -119,6 +148,8 @@ define([
       };
 
       var range = this.timeRange();
+
+      var all_dates = [];
 
       this.each(function(article){
         var date   = article.get("pub_date"),
@@ -133,22 +164,58 @@ define([
           gender = article.get("metrics")[byMetric].result.toLowerCase();
         }
 
-        bins[gender][date] = bins[gender][date] || 0;
-        bins[gender][date]++;  
+        parsed_date = moment(date, 'YYYYMMDD');
 
+
+        // if we're looking at more than 12 weeks, bin by month
+        var twelveWeeks = 1000 * 60 * 60 * 24 * 7 * 12;
+        var oneWeek = 1000 * 60 * 60 * 24 * 8;
+
+        if ((range.max - range.min) <= oneWeek) {
+          moment_date = parsed_date.format('YYYYMMDD');
+        } else if ((range.max - range.min) > twelveWeeks) {
+          moment_date = parsed_date.subtract('days', parsed_date.date()).format('YYYYMMDD');  
+        } else {
+          moment_date = parsed_date.subtract('days', parsed_date.day()).format('YYYYMMDD');  
+        }
+
+        bins[gender][moment_date] = bins[gender][moment_date] || 0;
+        bins[gender][moment_date]++;  
+
+        all_dates.push(moment_date);
       }, this);
 
+      // pad the data to at least have all the same x points.
+      this.all_dates = _.sortBy(_.unique(all_dates), function(date) {
+        return moment(date).valueOf();
+      });
+      this.max_count = 0;
+      var sum = 0;
+
+      for(var i = 0; i < all_dates.length; i++) {
+        sum = 0;
+        _.each(bins, function(dates, gender) {
+          if (typeof dates[all_dates[i]] === "undefined") {
+            dates[all_dates[i]] = 0
+          }
+          sum += dates[all_dates[i]];
+        });
+
+        if (sum > this.max_count) {
+          this.max_count = sum;
+        }
+      }
 
       // pad the data with zeroes for missing values.
-      for(var i = range.min; i < range.max; i = moment(i).add('days', 1)) {
-        var d = i.format('YYYYMMDD');
+      // for(var i = range.min; i < range.max; i = moment(i).add('days', 1)) {
+      //   var d = i.format('YYYYMMDD');
 
-        _.each(bins, function(dates, gender) {
-          if (typeof dates[d] === "undefined") {
-            dates[d] = 0
-          }
-        });
-      }
+      //   _.each(bins, function(dates, gender) {
+      //     if (typeof dates[d] === "undefined") {
+      //       dates[d] = 0
+      //     }
+      //   });
+      // }
 
       var data = [];
 
@@ -165,7 +232,7 @@ define([
         });  
 
         data.push({ 
-          classification : gender, 
+          name : gender, 
           values : genderData 
         }); 
       });
@@ -221,6 +288,37 @@ define([
       return { collection : this.collection };
     }
 
+  });
+
+  // author container. Has:
+  // name
+  // count
+  // gender
+  Article.Author = Backbone.Model.extend({});
+  Article.Authors = Backbone.Collection.extend({
+    model: Article.Author,
+    comparator : function(article) {
+      return -article.get("count");
+    }
+  });
+
+  Article.Views.AuthorListItem = Backbone.View.extend({
+    template: "articles/authorListItem",
+    tagName: "li",
+    serialize: function() {
+      return this.model.toJSON();
+    }
+  });
+
+  Article.Views.AuthorsList = Backbone.View.extend({
+    template : "articles/authorList",
+    beforeRender: function() {
+      this.collection.each(function(author) {
+        this.insertView('ul', new Article.Views.AuthorListItem({ 
+          model : author 
+        }));
+      }, this);
+    }
   });
 
   return Article;
