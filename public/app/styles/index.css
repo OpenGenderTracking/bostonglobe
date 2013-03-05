@@ -5,6 +5,9 @@
 
 /*-- Application stylesheets. -----------------------------------------------*/
 
+body {
+  padding: 30px;
+}
 /* --- general colors ---- */
 
 .female {
