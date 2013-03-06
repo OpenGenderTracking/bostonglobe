@@ -8,7 +8,14 @@ define([
 
   // a single job model
   Job.Model = Backbone.Model.extend({
-    url : 'job',
+    url : function() {
+      if (!this.isNew()) {
+        return "/job/" + this.id;  
+      } else {
+        return "/job";
+      }
+      
+    },
     idAttribute : '_id',
     parse : function(data) {
       if (typeof data === "string") {
@@ -28,8 +35,10 @@ define([
   // a single list item for the list of available jobs.
   Job.Views.ListItem = Backbone.View.extend({
     template : 'jobs/listItem',
+
     events : {
-      "click li" : "onJobSelection"
+      "click li span.job_name" : "onJobSelection",
+      "click li a.delete" : "onDelete"
     },
 
     onJobSelection : function() {
@@ -38,6 +47,21 @@ define([
       this.model.articles = new Article.Collection([], { job : this.model });
       this.model.articles.fetch().then(function() {
         app.trigger("job:select", self.model);  
+      });
+    },
+
+    onDelete : function() {
+      var self = this;
+      this.$el.text("deleting...");
+      this.model.destroy({ 
+        wait : true,
+        success : function() {
+          self.remove();
+        },
+
+        error : function() {
+          this.$el.text(this.model.get("name"));
+        }
       });
     },
 

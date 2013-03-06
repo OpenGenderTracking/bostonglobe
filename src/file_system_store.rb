@@ -1,4 +1,4 @@
-require 'lib/store'
+require './lib/store'
 
 module Store
   class FileSystemStore < Store::Default
@@ -59,6 +59,19 @@ module Store
       save_job(job)
     end
     
+    def delete_job(job_id)
+      full_path = File.expand_path(
+        File.join(
+          File.dirname(__FILE__), 
+          "../", 
+          @config.FileSystemStore.jobs.path,
+          job_id + ".json"
+        ) 
+      )
+
+      File.delete(full_path)
+    end
+
     def get_article(article_id, props=nil)
       article = { "id" => article_id }
       body = JSON.parse(

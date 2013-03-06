@@ -19,6 +19,10 @@ module Store
       # overwrite with your own storage mechanism.
     end
 
+    def delete_job(job_id)
+      # overwrite with your own storage mechanism.
+    end
+
     # return the contents of an article. Props allow
     # specifying what properties should be returned.
     # The props argument is optional. Without

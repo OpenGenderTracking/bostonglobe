@@ -6,9 +6,9 @@ require 'em-hiredis'
 require 'uuid'
 require 'yaml'
 require 'mongo'
-require 'src/api_parser'
-require 'src/mongo_store'
-require 'src/file_system_store'
+require './src/mongo_store'
+require './src/api_parser'
+require './src/file_system_store'
 require 'active_support/inflector'
 
 class JobAPI < Sinatra::Base
@@ -55,6 +55,18 @@ class JobAPI < Sinatra::Base
 
   end
 
+  # delete a specific job from the available job list.
+  delete '/:job_id' do
+    job_id = params[:job_id]
+    @@read.del job_id
+
+    @@store.delete_job(job_id)
+
+    # TODO: need to propagate that this job has been deleted. Not sure what
+    # this means yet.
+    response = { :job_id => job_id }.to_json
+    body response
+  end
 
   # new job request comes into /jobs.
   # with a url and name.
@@ -118,17 +130,6 @@ class JobAPI < Sinatra::Base
   get '/list' do
     jobs = @@store.list_jobs
     body jobs.to_json
-  end
-
-  # delete a specific job from the available job list.
-  delete '/:job_id' do
-    job_id = params[:job_id]
-    @@read.hdel job_id
-
-    # TODO: need to propagate that this job has been deleted. Not sure what
-    # this means yet.
-    response = { :job_id => job_id }.to_json
-    body response
   end
 
   get '/:job_id/articles/list' do

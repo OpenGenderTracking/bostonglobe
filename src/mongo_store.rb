@@ -1,4 +1,4 @@
-require 'lib/store'
+require './lib/store'
 require 'mongo'
 
 module Store
@@ -30,13 +30,17 @@ module Store
     end
     
     def save_job(job)
-      # overwrite with your own storage mechanism.
       @jobs.insert(job)
     end
 
     def update_job(job)
-      # overwrite with your own storage mechanism.
       @jobs.update({ "_id" => job[:_id] }, job)
+    end
+
+    def delete_job(job_id)
+      # note this doesn't remove the articles. That's because jobs can share
+      # articles.
+      @jobs.remove({ "_id" => job_id })
     end
 
     def get_article(article_id, props=nil)
