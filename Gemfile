@@ -19,6 +19,7 @@ gem 'bson_ext'
 gem 'mongo'
 gem 'activesupport'
 gem 'sinatra-contrib'
+gem 'libxml-ruby'
 
 group :test do
   gem 'rake', '0.9.2.2'

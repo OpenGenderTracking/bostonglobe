@@ -3,6 +3,9 @@ redis:
   port: 6379
   namespace: bg_
 
+full_articles:
+  path: /Users/iros/dev/bocoup/opengendertracking/bostonglobe_articles
+
 storeType: MongoStore
 
 FileSystemStore:
