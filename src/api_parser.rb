@@ -1,6 +1,8 @@
 require 'lib/parser'
 require 'open-uri'
 require 'cgi'
+require 'xml'
+require 'sanitize'
 
 module Parsers
   class APIParser < Parsers::Default
@@ -16,6 +18,12 @@ module Parsers
       # again when we are done adding items to it.
       @job[:status] = 'getting articles'
       @store.save_job(@job)
+
+      # do we have full text?
+      @full_text = false
+      if (@config.full_articles)
+        @full_text = true
+      end
     end
 
     # we have:
@@ -46,10 +54,41 @@ module Parsers
       if (!@store.has_article?(article))
         article["url"] = entry["data"]["canonicalurl"][0]
         article["title"] = entry["data"]["headline"][0]
-        article["body"] = entry["data"]["summary"][0]
-        article["original_body"] = entry["data"]["summary"][0]
         article["pub_date"] = entry["data"]["printpublicationdate"][0]
         article["byline"] = entry["data"]["byname"][0]
+
+        if (@full_text)
+          # try to find the full text file
+          file_path = article["id"] + '.uuid.xml'
+
+          file_path = File.expand_path(
+            File.join(
+              @config.full_articles.path,
+              file_path 
+            ) 
+          )
+
+          begin
+            if (File.exists?(file_path))
+              article_body = XML::Parser.string(File.open(file_path).read)
+              article_body = article_body.parse
+
+              article_body.find('//content').each do |body|
+                article["body"] = Sanitize.clean(body.content)
+                article["original_body"] = body.content
+              end
+            else 
+              throw Exception.new("File doesn't exist")
+            end
+          rescue
+            article["body"] = entry["data"]["summary"][0]
+            article["original_body"] = entry["data"]["summary"][0]
+          end
+
+        else
+          article["body"] = entry["data"]["summary"][0]
+          article["original_body"] = entry["data"]["summary"][0]
+        end
 
         # save the article with whatever store we're using.
         @store.save_article(article)
@@ -85,7 +124,6 @@ module Parsers
         new_url = set_start(url, start_index + on_current_page)
         fetch_all_articles(new_url)
       end
-
 
     end 
 
