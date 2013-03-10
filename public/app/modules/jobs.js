@@ -109,14 +109,38 @@ define([
       this.job_list = options.job_list;
     },
 
+    enqueueNewJob : function(url_value, query_name){
+      // save the url in our job model.
+      this.model.set({ 'url': url_value, 'name' : query_name });
+
+      // save the model. On success add it to the job list!
+      this.model.save({}, { wait: true }).then(_.bind(function() { 
+
+        // save a clone of this model. Note we're keeping the
+        // original to put the form data into it.
+        this.job_list.add(this.model.clone());
+
+        // reset the origial model to an empty job
+        this.model = new Job.Model();
+
+        // clear the form, since we were successful.
+        this.$el.find('#url').val('');
+        this.$el.find('#query_name').val('');
+
+      }, this));
+
+    },
+
     // interrupt normal form submission to use backbon'e save
     // method instead.
     onSubmit : function(e) {
 
-      // save the url in our job model.
-      var url_value = this.$el.find('#url').val();
-      var name      = this.$el.find('#query_name').val();
-      this.model.set({ 'url': url_value, 'name' : name });
+      // retrieve the url and query name from the model
+      var url_value  = this.$el.find('#url').val();
+      var query_name = this.$el.find('#query_name').val();
+ 
+      this.enqueueNewJob(url_value, query_name);
+/*      this.model.set({ 'url': url_value, 'name' : query_name });
 
       // save the model. On success add it to the job list!
       this.model.save({}, { wait: true }).then(_.bind(function() {
@@ -132,7 +156,7 @@ define([
         this.$el.find('#url').val('');
         this.$el.find('#query_name').val('');
 
-      }, this));
+      }, this));*/
 
       
       return false;
