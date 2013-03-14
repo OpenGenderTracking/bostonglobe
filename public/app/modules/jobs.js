@@ -107,16 +107,15 @@ define([
     // pass a job_list option pointing to the job list view.
     initialize : function(attrs, options) {
       this.job_list = options.job_list;
+
+      BostonGlobe.vent.on("Job.Views.Form:enqueueNewJob", this.enqueueNewJob, this)
+
     },
 
-    // interrupt normal form submission to use backbon'e save
-    // method instead.
-    onSubmit : function(e) {
 
+    enqueueNewJob : function(args){
       // save the url in our job model.
-      var url_value = this.$el.find('#url').val();
-      var name      = this.$el.find('#query_name').val();
-      this.model.set({ 'url': url_value, 'name' : name });
+      this.model.set({ 'url':args.url, 'name' : args.name });
 
       // save the model. On success add it to the job list!
       this.model.save({}, { wait: true }).then(_.bind(function() {
@@ -133,8 +132,15 @@ define([
         this.$el.find('#query_name').val('');
 
       }, this));
+    },
 
-      
+    // interrupt normal form submission to use backbon'e save
+    // method instead.
+    onSubmit : function(e) {
+      // save the url in our job model.
+      var url_value = this.$el.find('#url').val();
+      var name      = this.$el.find('#query_name').val();
+      this.enqueueNewJob({url:url_value, name: name});
       return false;
     }
   });

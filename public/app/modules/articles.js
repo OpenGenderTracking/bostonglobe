@@ -305,6 +305,13 @@ define([
   Article.Views.AuthorListItem = Backbone.View.extend({
     template: "articles/authorListItem",
     tagName: "li",
+    events: {
+      "click" : "onAuthorListSelection"
+    },
+    onAuthorListSelection: function(e){
+      url = "http://50.17.92.83/s?key=chris&bq=(and%20byname:'" + encodeURIComponent(this.model.attributes.name) + "'%20printpublicationdate:" + moment().subtract("days", 60).format("YYYYMMDD") + ".." + moment().format("YYYYMMDD") + ")&return-fields=id&start=0&size=50&rank=-printpublicationdate";
+      BostonGlobe.vent.trigger("Job.Views.Form:enqueueNewJob",{url:url , name:"author: " + this.model.attributes.name});
+    },
     serialize: function() {
       return this.model.toJSON();
     }
