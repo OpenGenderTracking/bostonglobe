@@ -12,6 +12,9 @@ define([
   // Localize or create a new JavaScript Template object.
   var JST = window.JST = window.JST || {};
 
+  BostonGlobe = {};
+  BostonGlobe.vent = _.extend({}, Backbone.Events);
+
   // Configure LayoutManager with Backbone Boilerplate defaults.
   Backbone.Layout.configure({
     // Allow LayoutManager to augment Backbone.View.prototype.
